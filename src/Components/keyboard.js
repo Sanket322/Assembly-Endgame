@@ -2,86 +2,74 @@ import { useEffect, useState } from "react";
 import { languages } from "../Data/language";
 
 export default function Button(props) {
+  const word = props.word;
+  const [highlightedCharacters, setHighlightedCharacters] = useState(new Set());
+  const [excludedButtons, setExcludedButtons] = useState(new Set());
+
+  const alphabet = Array.from({ length: 26 }, (_, i) =>
+    String.fromCharCode(65 + i).toLowerCase()
+  );
+
   function handleClick(event) {
     if (props.status != "") return;
 
     const character = event.target.textContent.toLowerCase();
+    if (highlightedCharacters.has(character) || excludedButtons.has(character))
+      return;
     let isCharacterHighlighted = false;
 
-    word.split("").forEach((element) => {
-      if (element == character) {
-        isCharacterHighlighted = true;
-        setHighlightedCharacters((previous) => [...previous, character]);
-        setHighlightedButtons((previous) => [...previous, character]);
-      }
-    });
-
-    if (!isCharacterHighlighted && !excluded_buttons.includes(character)) {
-      setExcludedButtons((previous) => [...previous, character]);
+    if (word.includes(character)) {
+      isCharacterHighlighted = true;
+      setHighlightedCharacters((previous) =>  new Set(previous).add(character));
+    } else {
+      setExcludedButtons((previous) => new Set(previous).add(character));
       props.setFailedAttempts((previous) => previous + 1);
     }
   }
 
   //code for a-z characters
-  const [highlighted_buttons, setHighlightedButtons] = useState([]);
-  const [excluded_buttons, setExcludedButtons] = useState([]);
-  let buttons = [];
-  for (let i = 65; i <= 90; i++) {
-    buttons.push(String.fromCharCode(i));
+  function renderButtons() {
+    return alphabet.map((char) => {
+      const isCorrect = highlightedCharacters.has(char);
+      const isWrong = excludedButtons.has(char);
+      const style = isCorrect ? "#10A95B" : (isWrong ? "#EC5D49" : "") 
+
+      return (
+        <button
+          key={char}
+          style={{background : style}}
+          onClick={handleClick}
+        >
+          {char}
+        </button>
+      );
+    });
   }
 
-  buttons = buttons.map((button) => {
-    button = button.toLowerCase()
-    const isCorrect = highlighted_buttons.includes(button);
-    const isWrong = excluded_buttons.includes(button);
-    
-    let style = "";
-    if (isCorrect) {
-      style = "#10A95B";
-    } else if (isWrong) {
-      style = "#EC5D49";
+  useEffect(() => {
+    if (highlightedCharacters.size === word.length) props.setStatus("Win");
+    if (props.failedAttempts >= languages.length) props.setStatus("Lose");
+
+  }, [highlightedCharacters, props.failedAttempts]);
+
+  useEffect(() => {
+    if (props.status === "New Game") {
+      setHighlightedCharacters(new Set());
+      setExcludedButtons(new Set());
+      props.setStatus("")
     }
+  }, [props.status]);
 
-    return (
-      <button style={{ background : style}} onClick={handleClick}>
-        {button}
-      </button>
-    );
-  });
-
-  //code to set the status
-  useEffect(
-    function () {
-      if (highlighted_buttons.length === word.length) props.setStatus("Win");
-      if (props.falied_attempts === languages.length) props.setStatus("Loose");
-    },
-    [highlighted_buttons, props.falied_attempts]
-  );
-
-  useEffect(
-    function () {
-      setExcludedButtons([]);
-      setHighlightedButtons([]);
-      setHighlightedCharacters([]);
-      props.setStatus("");
-    },
-    [props.status == "New Game"]
-  );
-
-  const word = props.word;
-  const [highlightedCharacters, setHighlightedCharacters] = useState([]);
-  const renderedCharacters = word
-    .split("")
-    .map((char) => (
-      <span className="characters">
-        {highlightedCharacters.includes(char) ? char : ""}
-      </span>
-    ));
+  const renderedCharacters = word.split("").map((char, index) => (
+    <span key={index} className="characters">
+      {highlightedCharacters.has(char) ? char : ""}
+    </span>
+  ));
 
   return (
     <>
       <section className="word">{renderedCharacters}</section>
-      <section className="keyboard">{buttons}</section>
+      <section className="keyboard">{renderButtons()}</section>
     </>
   );
 }

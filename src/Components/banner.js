@@ -5,8 +5,8 @@ export default function banner(props) {
     <span
       style={{
         color: "white",
-        textDecoration: index < props.falied_attempts ? "line-through" : "none",
-        opacity: index < props.falied_attempts ? 0.5 : 1,
+        textDecoration: index < props.failedAttempts ? "line-through" : "none",
+        opacity: index < props.failedAttempts ? 0.5 : 1,
         background: language.backgroundColor,
         color: language.color,
       }}
@@ -23,7 +23,7 @@ export default function banner(props) {
           <p>Well done! 🎉</p>
         </>
       );
-    } else if(props.status === "Loose") {
+    } else if(props.status === "Lose") {
       return (
         <>
           <h2>You Lose!</h2>
@@ -36,7 +36,7 @@ export default function banner(props) {
   const game_status_background = () => {
     if(props.status === "Win"){
        return "#10A95B"
-    }else if(props.status === "Loose"){
+    }else if(props.status === "Lose"){
       return "#BA2A2A"
     }
     return null
