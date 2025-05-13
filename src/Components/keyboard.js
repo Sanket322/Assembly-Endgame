@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { clsx } from "clsx"
 import { languages } from "../Data/language";
 
 export default function Button(props) {
   function handleClick(event) {
-    if(props.status != "") return;
+    if (props.status != "") return;
 
     const character = event.target.textContent.toLowerCase();
     let isCharacterHighlighted = false;
@@ -32,18 +31,19 @@ export default function Button(props) {
   }
 
   buttons = buttons.map((button) => {
-    const isCorrect = highlighted_buttons.includes(button)
-    const isWrong = excluded_buttons.includes(button)
-    const className = clsx({
-      correct: isCorrect,
-      wrong: isWrong,
-    });
+    button = button.toLowerCase()
+    const isCorrect = highlighted_buttons.includes(button);
+    const isWrong = excluded_buttons.includes(button);
+    
+    let style = "";
+    if (isCorrect) {
+      style = "#10A95B";
+    } else if (isWrong) {
+      style = "#EC5D49";
+    }
 
     return (
-      <button
-        className={className}
-        onClick={handleClick}
-      >
+      <button style={{ background : style}} onClick={handleClick}>
         {button}
       </button>
     );
@@ -58,20 +58,25 @@ export default function Button(props) {
     [highlighted_buttons, props.falied_attempts]
   );
 
-  useEffect(function(){
-    setExcludedButtons([])
-    setHighlightedButtons([])
-    setHighlightedCharacters([])
-    props.setStatus("")
-  }, [props.status== "New Game"])
+  useEffect(
+    function () {
+      setExcludedButtons([]);
+      setHighlightedButtons([]);
+      setHighlightedCharacters([]);
+      props.setStatus("");
+    },
+    [props.status == "New Game"]
+  );
 
   const word = props.word;
   const [highlightedCharacters, setHighlightedCharacters] = useState([]);
-  const renderedCharacters = word.split("").map((char) => (
-    <span className="characters">
-      {highlightedCharacters.includes(char) ? char : ""}
-    </span>
-  ));
+  const renderedCharacters = word
+    .split("")
+    .map((char) => (
+      <span className="characters">
+        {highlightedCharacters.includes(char) ? char : ""}
+      </span>
+    ));
 
   return (
     <>

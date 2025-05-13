@@ -6,7 +6,7 @@ import Keyboard from './Components/keyboard';
 import {words} from "./Data/words"
 
 function App() {
-  const [currentWord, setCurrentcurrentWord] = useState(() => getRandomcurrentWord())
+  const [currentWord, setCurrentcurrentWord] = useState("bottle")
   const [falied_attempts, setFailedAttempts] = useState(0)
   const [status, setStatus] = useState("")
 

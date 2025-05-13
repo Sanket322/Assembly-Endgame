@@ -27,7 +27,7 @@ export default function banner(props) {
       return (
         <>
           <h2>You Lose!</h2>
-          <p>Better Luck Next Time</p>
+          <p>Better start learning Assembly</p>
         </>
       );
     }
